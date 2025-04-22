@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Conversor de Arquivos CDR</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<div id="app">
+    <h1>Conversor de Arquivos .CDR</h1>
+
+    <form id="uploadForm" method="post" enctype="multipart/form-data" action="/enviar">
+        <input type="file" name="arquivo" id="arquivo" required>
+        <button type="submit" id="enviarBtn">Converter Arquivo</button>
+    </form>
+
+    <div id="status"></div>
+</div>
+
+<script>
+    const form = document.getElementById("uploadForm");
+    const btn = document.getElementById("enviarBtn");
+    const statusDiv = document.getElementById("status");
+
+    form.addEventListener("submit", async function (event) {
+        event.preventDefault();
+
+        const fileInput = document.getElementById("arquivo");
+        const file = fileInput.files[0];
+
+        if (!file) {
+            statusDiv.innerHTML = "<p style='color: red;'>Selecione um arquivo .CDR primeiro.</p>";
+            return;
+        }
+
+        // Configura feedback visual
+        btn.disabled = true;
+        btn.innerText = "Convertendo...";
+        statusDiv.innerHTML = "<p>⏳ Enviando e processando arquivo...</p>";
+
+        const formData = new FormData();
+        formData.append("arquivo", file);
+
+        try {
+            const response = await fetch("/enviar", {
+                method: "POST",
+                body: formData
+            });
+
+            const result = await response.text();
+
+            if (result.includes("http")) {
+                const url = result.match(/https?:\/\/\S+/)[0];
+                statusDiv.innerHTML = `
+                    <p style="color: green;"><strong>✅ Conversão concluída!</strong></p>
+                    <a href="${url}" target="_blank" rel="noopener">📥 Baixar Arquivo</a>
+                `;
+            } else {
+                statusDiv.innerHTML = `<p style="color: red;">❌ ${result}</p>`;
+            }
+
+        } catch (error) {
+            statusDiv.innerHTML = `<p style="color: red;">❌ Erro inesperado: ${error.message}</p>`;
+        }
+
+        // Reset botão
+        btn.disabled = false;
+        btn.innerText = "Converter Arquivo";
+    });
+</script>
+
+</body>
+</html>

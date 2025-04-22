@@ -1,0 +1,113 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: #f4f7f9;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+#app {
+  background: #fff;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 480px;
+  text-align: center;
+}
+
+h1 {
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+  color: #2465E5;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+input[type="file"] {
+  padding: 12px;
+  border: 2px solid #ccc;
+  border-radius: 8px;
+  background-color: #fafafa;
+  cursor: pointer;
+  transition: border 0.2s;
+  font-size: 1rem;
+}
+
+input[type="file"]:hover {
+  border-color: #888;
+}
+
+button {
+  background-color: #2465E5;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+button:hover {
+  background-color: #1c50ba;
+}
+
+button:disabled {
+  background-color: #a3b9e7;
+  cursor: not-allowed;
+}
+
+#status {
+  margin-top: 25px;
+  font-size: 0.95rem;
+  color: #555;
+  word-break: break-word;
+}
+
+#status a {
+  color: #2465E5;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+#status a:hover {
+  text-decoration: underline;
+}
+
+/* 📱 Responsividade */
+@media (max-width: 480px) {
+  #app {
+    padding: 25px 20px;
+    box-shadow: none;
+    border-radius: 0;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  input[type="file"],
+  button {
+    font-size: 0.95rem;
+    padding: 10px;
+  }
+
+  #status {
+    font-size: 0.9rem;
+  }
+}
