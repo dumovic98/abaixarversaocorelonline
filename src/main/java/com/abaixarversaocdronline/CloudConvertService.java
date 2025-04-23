@@ -43,6 +43,6 @@ public class CloudConvertService {
             return "❌ Erro ao converter com o Inkscape. Código: " + status;
         }
 
-        return "✅ Conversão realizada com sucesso!\n\n📄 Arquivo gerado: " + tempOutput.getName();
+        return "✅ Conversão realizada com sucesso! 📄 Arquivo gerado: <a href='/download/1745370164753_Modelos Carro.pdf' target='_blank'>1745370164753_Modelos Carro.pdf</a>";
     }
 }
