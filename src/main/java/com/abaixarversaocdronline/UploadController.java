@@ -54,4 +54,16 @@ public class UploadController {
                 .headers(headers)
                 .body(resource);
     }
+
+    @GetMapping("/download/{arquivo}")
+    public ResponseEntity<FileSystemResource> baixar(@PathVariable String arquivo) {
+        File output = new File("/tmp/" + arquivo);
+        if (!output.exists()) return ResponseEntity.notFound().build();
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + output.getName())
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(new FileSystemResource(output));
+    }
+
 }
