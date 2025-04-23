@@ -50,10 +50,9 @@
             });
 
             const result = await response.text();
-            // só pra fazer commmit
             // Verifica se há link do tipo "/arquivos/nome.ext"
+            console.log(result);
             const match = result.match(/\/arquivos\/[^\s]+/);
-            console.log (match);
             if (match) {
                 const url = match[0];
                 statusDiv.innerHTML = `
