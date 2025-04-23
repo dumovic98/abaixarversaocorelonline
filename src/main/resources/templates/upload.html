@@ -49,24 +49,41 @@
                 body: formData
             });
 
-            const result = await response.text();
-            // Verifica se há link do tipo "/arquivos/nome.ext"
-            console.log(result);
-            const match = result.match(/\/arquivos\/[^\s]+/);
-            if (match) {
-                const url = match[0];
-                statusDiv.innerHTML = `
-                    <p style="color: green;"><strong>✅ Conversão concluída!</strong></p>
-                    <a href="${url}" target="_blank" rel="noopener">📥 Baixar Arquivo</a>
-                `;
-            } else {
-                statusDiv.innerHTML = `<p style="color: red;">❌ ${result}</p>`;
+            if (!response.ok) {
+                const errorText = await response.text();
+                statusDiv.innerHTML = `<p style="color: red;">❌ ${errorText}</p>`;
+                return;
             }
+
+            // Extrai nome do arquivo do header (se o backend envia Content-Disposition com filename)
+            const disposition = response.headers.get("Content-Disposition");
+            let filename = "arquivo_convertido";
+            if (disposition && disposition.includes("filename=")) {
+                const match = disposition.match(/filename="?([^"]+)"?/);
+                if (match && match[1]) {
+                    filename = match[1];
+                }
+            }
+
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+
+            // Cria um link invisível para iniciar o download
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+
+            // Limpa URL de objeto e remove o link
+            window.URL.revokeObjectURL(url);
+            a.remove();
+
+            statusDiv.innerHTML = `<p style="color: green;"><strong>✅ Conversão concluída! O download foi iniciado.</strong></p>`;
 
         } catch (error) {
             statusDiv.innerHTML = `<p style="color: red;">❌ Erro inesperado: ${error.message}</p>`;
         }
-
         // Reset botão
         btn.disabled = false;
         btn.innerText = "Converter Arquivo";
