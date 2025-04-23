@@ -20,50 +20,31 @@ public class UploadController {
         return "upload";
     }
 
-    @PostMapping("/enviar")
+    @PostMapping(value = "/enviar", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ResponseBody
-    public String receberArquivo(@RequestParam("arquivo") MultipartFile arquivo) {
+    public ResponseEntity<?> receberArquivo(@RequestParam("arquivo") MultipartFile arquivo) {
         try {
             if (arquivo.isEmpty()) {
-                return "Arquivo não foi enviado!";
+                return ResponseEntity.badRequest().body("❌ Arquivo não foi enviado!");
             }
 
-            String resposta = cloudConvertService.converterArquivo(arquivo);
-            return "Arquivo recebido e enviado para conversão. Resposta:\n\n" + resposta;
+            File convertido = cloudConvertService.converterArquivoRetornandoArquivo(arquivo);
+
+            if (convertido == null || !convertido.exists()) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body("❌ Erro na conversão ou arquivo não gerado.");
+            }
+
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + convertido.getName() + "\"")
+                    .contentLength(convertido.length())
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .body(new FileSystemResource(convertido));
 
         } catch (Exception e) {
             e.printStackTrace();
-            return "Erro ao processar o arquivo: " + e.getMessage();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("❌ Erro inesperado: " + e.getMessage());
         }
     }
-
-    @GetMapping("/arquivos/{nome}")
-    public ResponseEntity<FileSystemResource> baixarArquivo(@PathVariable String nome) {
-        File arquivo = new File("/app/uploads/" + nome);
-
-        if (!arquivo.exists()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        FileSystemResource resource = new FileSystemResource(arquivo);
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentDisposition(ContentDisposition.attachment().filename(nome).build());
-        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-
-        return ResponseEntity.ok()
-                .headers(headers)
-                .body(resource);
-    }
-
-    @GetMapping("/download/{arquivo}")
-    public ResponseEntity<FileSystemResource> baixar(@PathVariable String arquivo) {
-        File output = new File("/tmp/" + arquivo);
-        if (!output.exists()) return ResponseEntity.notFound().build();
-
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + output.getName())
-                .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                .body(new FileSystemResource(output));
-    }
-
 }
