@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.4</version> <!-- Última estável até abril/2025 -->
+        <version>3.1.4</version>
         <relativePath/>
     </parent>
 
@@ -15,12 +15,11 @@
     <artifactId>abaixarversaocdronline</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
+
     <name>ConversorCDR</name>
 
     <properties>
-        <java.version>24</java.version>
-        <maven.compiler.source>24</maven.compiler.source>
-        <maven.compiler.target>24</maven.compiler.target>
+        <java.version>17</java.version> <!-- Compatível com 17+ -->
     </properties>
 
     <dependencies>
@@ -34,34 +33,37 @@
         <dependency>
             <groupId>commons-fileupload</groupId>
             <artifactId>commons-fileupload</artifactId>
+            <version>1.5</version> <!-- 🔧 ADICIONADO PARA CORRIGIR ERRO -->
         </dependency>
 
         <!-- Validação -->
         <dependency>
             <groupId>jakarta.validation</groupId>
             <artifactId>jakarta.validation-api</artifactId>
+            <version>3.0.2</version>
         </dependency>
     </dependencies>
 
     <build>
         <plugins>
-            <!-- Compilador compatível com Java 24 -->
+            <!-- Compilador compatível com Java 17+ -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.11.0</version>
                 <configuration>
-                    <release>24</release>
+                    <source>17</source>
+                    <target>17</target>
                 </configuration>
             </plugin>
 
-            <!-- Spring Boot plugin -->
+            <!-- Plugin Spring Boot -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
 
-            <!-- Geração do JAR com manifest -->
+            <!-- Criação do JAR com Manifest correto -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -76,4 +78,5 @@
             </plugin>
         </plugins>
     </build>
+
 </project>
