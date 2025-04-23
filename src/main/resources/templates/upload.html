@@ -53,6 +53,7 @@
 
             // Verifica se há link do tipo "/arquivos/nome.ext"
             const match = result.match(/\/arquivos\/[^\s]+/);
+            console.log (match);
             if (match) {
                 const url = match[0];
                 statusDiv.innerHTML = `
