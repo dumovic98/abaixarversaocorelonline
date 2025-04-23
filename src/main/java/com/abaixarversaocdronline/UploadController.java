@@ -1,9 +1,13 @@
 package com.abaixarversaocdronline;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
 
 @Controller
 public class UploadController {
@@ -28,20 +32,26 @@ public class UploadController {
             return "Arquivo recebido e enviado para conversão. Resposta:\n\n" + resposta;
 
         } catch (Exception e) {
-            e.printStackTrace(); // Mostra o erro no console
+            e.printStackTrace();
             return "Erro ao processar o arquivo: " + e.getMessage();
         }
     }
-    @GetMapping("/jobs")
-    @ResponseBody
-    public String listarJobs() {
-        return cloudConvertService.listarJobsRecentes();
-    }
 
-    @GetMapping("/deletar/{id}")
-    @ResponseBody
-    public String deletarJob(@PathVariable String id) {
-        return cloudConvertService.deletarJob(id);
-    }
+    @GetMapping("/arquivos/{nome}")
+    public ResponseEntity<FileSystemResource> baixarArquivo(@PathVariable String nome) {
+        File arquivo = new File("/app/uploads/" + nome);
 
+        if (!arquivo.exists()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        FileSystemResource resource = new FileSystemResource(arquivo);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentDisposition(ContentDisposition.attachment().filename(nome).build());
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(resource);
+    }
 }

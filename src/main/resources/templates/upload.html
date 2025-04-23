@@ -7,15 +7,16 @@
 </head>
 <body>
 
-<div id="app">
-    <h1>Conversor de Arquivos .CDR</h1>
+<div id="app" style="max-width: 500px; margin: 40px auto; text-align: center; font-family: Arial, sans-serif;">
+    <h1 style="margin-bottom: 20px;">Conversor de Arquivos .CDR</h1>
 
     <form id="uploadForm" method="post" enctype="multipart/form-data" action="/enviar">
-        <input type="file" name="arquivo" id="arquivo" required>
-        <button type="submit" id="enviarBtn">Converter Arquivo</button>
+        <input type="file" name="arquivo" id="arquivo" required style="margin-bottom: 15px;">
+        <br>
+        <button type="submit" id="enviarBtn" style="padding: 10px 20px;">Converter Arquivo</button>
     </form>
 
-    <div id="status"></div>
+    <div id="status" style="margin-top: 30px;"></div>
 </div>
 
 <script>
@@ -34,7 +35,7 @@
             return;
         }
 
-        // Configura feedback visual
+        // Feedback visual
         btn.disabled = true;
         btn.innerText = "Convertendo...";
         statusDiv.innerHTML = "<p>⏳ Enviando e processando arquivo...</p>";
@@ -50,8 +51,10 @@
 
             const result = await response.text();
 
-            if (result.includes("http")) {
-                const url = result.match(/https?:\/\/\S+/)[0];
+            // Verifica se há link do tipo "/arquivos/nome.ext"
+            const match = result.match(/\/arquivos\/[^\s]+/);
+            if (match) {
+                const url = match[0];
                 statusDiv.innerHTML = `
                     <p style="color: green;"><strong>✅ Conversão concluída!</strong></p>
                     <a href="${url}" target="_blank" rel="noopener">📥 Baixar Arquivo</a>
